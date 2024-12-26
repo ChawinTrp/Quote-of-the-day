@@ -12,14 +12,11 @@ const Quote = () => {
             try {
                 const response = await fetch('https://quotes-api-self.vercel.app/quote');
                 if (!response.ok) {
-                    // Try to get error details from the API response (if available)
                     let errorMessage = `HTTP error ${response.status}`;
                     try {
                         const errorData = await response.json();
                         errorMessage += `: ${errorData?.message || response.statusText}`;
-                    } catch (jsonError) {
-                        // Ignore JSON parsing errors if the response isn't JSON
-                    }
+                    } catch (jsonError) { /* Ignore JSON parsing errors */ }
                     throw new Error(errorMessage);
                 }
                 const data = await response.json();
@@ -36,23 +33,38 @@ const Quote = () => {
     }, []);
 
     if (loading) {
-        return <p>Loading quote...</p>;
+        return (
+            <div className="quote-container loading">
+                <p>Loading quote...</p>
+            </div>
+        );
     }
 
     if (error) {
-        return <p style={{ color: 'red' }}>Error: {error}</p>;
+        return (
+            <div className="quote-container error">
+                <p style={{ color: 'red' }}>Error: {error}</p>
+            </div>
+        );
     }
 
     if (!quote) {
-        return <p>No quote available.</p>;
+        return (
+            <div className="quote-container no-quote">
+                <p>No quote available.</p>
+            </div>
+        );
     }
 
     return (
-        <div>
-            <p>"{quote.quote}"</p>
-            <p>- {quote.author}</p>
+        <div className="quote-container">
+            <div className="quote-content"> {/* Added a wrapper for styling */}
+                <h1 className='quote-header'>Quote of the Day</h1>
+                <p className="quote-text">"{quote.quote}"</p>
+                <p className="quote-author">- {quote.author}</p>
+            </div>
         </div>
     );
 };
 
-export default Quote; 
+export default Quote;
